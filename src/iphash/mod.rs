@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-struct IpHashLoadBalancer {
+pub struct IpHashLoadBalancer {
     server_map: HashMap<String, String>,
 }
 

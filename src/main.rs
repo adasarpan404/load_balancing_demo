@@ -1,3 +1,4 @@
+use iphash::IpHashLoadBalancer;
 use leastconnection::LeastConnectionLoadBalancer;
 use roundrobin::RoundRobinLoadBalancer;
 use weightedroundrobin::WeightedRoundRobinLoadBalancer;
@@ -43,5 +44,19 @@ fn main() {
         if let Some(server) = weightedroundrobinbalancer.next_server() {
             println!("Request {} directed to: {}", i + 1, server);
         }
+    }
+
+    println!("Ip Hash Load Balancer Starts ");
+    let mut iphashloadbalancer = IpHashLoadBalancer::new();
+
+    // Add servers with their IP addresses
+    iphashloadbalancer.add_server("192.168.1.1".to_string(), "Server1".to_string());
+    iphashloadbalancer.add_server("192.168.1.2".to_string(), "Server2".to_string());
+
+    // Retrieve servers based on IP address
+    let ip = "192.168.1.1";
+    match iphashloadbalancer.get_server(ip) {
+        Some(server) => println!("IP {} is directed to: {}", ip, server),
+        None => println!("No server found for IP {}", ip),
     }
 }
