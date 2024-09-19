@@ -1,9 +1,13 @@
+use dynamic::DynamicLoadBalancer;
 use iphash::IpHashLoadBalancer;
+use lcg::LcgRng;
 use leastconnection::LeastConnectionLoadBalancer;
 use roundrobin::RoundRobinLoadBalancer;
 use weightedroundrobin::WeightedRoundRobinLoadBalancer;
 
+mod dynamic;
 mod iphash;
+mod lcg;
 mod leastconnection;
 mod roundrobin;
 mod weightedroundrobin;
@@ -58,5 +62,22 @@ fn main() {
     match iphashloadbalancer.get_server(ip) {
         Some(server) => println!("IP {} is directed to: {}", ip, server),
         None => println!("No server found for IP {}", ip),
+    }
+
+    println!("Dynamic Load Balancer Starts ");
+
+    let mut dynamicloadbalancer = DynamicLoadBalancer::new();
+
+    dynamicloadbalancer.add_server("Server1".to_string());
+    dynamicloadbalancer.add_server("Server2".to_string());
+    dynamicloadbalancer.add_server("Server3".to_string());
+
+    let mut lcgrng = LcgRng::new(12345);
+
+    for i in 0..10 {
+        let load = lcgrng.lcg_rand();
+        if let Some(server) = dynamicloadbalancer.next_server(load) {
+            println!("Request {} directed to: {}", i + 1, server);
+        }
     }
 }
