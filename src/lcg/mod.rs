@@ -1,10 +1,17 @@
+use std::time::{SystemTime, UNIX_EPOCH};
+
 pub struct LcgRng {
     seed: u64,
 }
 
 impl LcgRng {
-    pub fn new(seed: u64) -> Self {
-        LcgRng { seed }
+    pub fn new() -> Self {
+        let start = SystemTime::now();
+        let seed = start
+            .duration_since(UNIX_EPOCH)
+            .expect("Time went backwards")
+            .as_secs();
+        Self { seed }
     }
 
     pub fn lcg_rand(&mut self) -> f64 {

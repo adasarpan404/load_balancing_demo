@@ -72,10 +72,12 @@ fn main() {
     dynamicloadbalancer.add_server("Server2".to_string());
     dynamicloadbalancer.add_server("Server3".to_string());
 
-    let mut lcgrng = LcgRng::new(12345);
+    let mut lcgrng = LcgRng::new();
 
     for i in 0..10 {
         let load = lcgrng.lcg_rand();
+
+        println!("Load {:?}", load);
         if let Some(server) = dynamicloadbalancer.next_server(load) {
             println!("Request {} directed to: {}", i + 1, server);
         }
